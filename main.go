@@ -1,9 +1,9 @@
 package main
 
 import (
-	bt "bigbro/bigtime"
-	fl "bigbro/filer"
-	ps "bigbro/process"
+	bt "bytebrother/main/bigtime"
+	fl "bytebrother/main/filer"
+	ps "bytebrother/main/process"
 	f "fmt"
 	"os"
 	"os/signal"

@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 )
 
-var Folder string = "BigBro"
-var ExeLog string = "exes.log"
+var Folder string = "ByteBrother"
+var ExeLog string = "exes.json"
 
 func WalkDir(root string, walkFn func(path string, info os.FileInfo, err error) error) error {
 	return filepath.Walk(root, walkFn)

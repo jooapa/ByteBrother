@@ -1,4 +1,4 @@
-module bigbro
+module bytebrother
 
 go 1.21.6
 

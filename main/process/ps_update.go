@@ -6,8 +6,8 @@ import (
 	"os"
 	"time"
 
-	bt "bigbro/bigtime"
-	fl "bigbro/filer"
+	bt "bytebrother/main/bigtime"
+	fl "bytebrother/main/filer"
 )
 
 // ProcessEntry represents a single entry in the process log.
