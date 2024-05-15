@@ -5,32 +5,45 @@ import (
 	fl "bigbro/filer"
 	ps "bigbro/process"
 	f "fmt"
+	"os"
+	"os/signal"
+	"syscall"
 	t "time"
 )
 
-var processInterval t.Duration = 1
+var processInterval t.Duration = 400
 
 func main() {
-	// time
+	fl.MakeNecessaryFiles()
 
-	fl.MakeNessesaryFiles()
+	ps.ResetCurrentlyOpened()
+
+	// Create a channel to receive OS signals
+	sigs := make(chan os.Signal, 1)
+
+	// Register the channel to receive interrupt and termination signals
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+
+	// Run a goroutine that waits for the application to be interrupted or terminated
+	go func() {
+		<-sigs
+		ps.Processes(true) // Process one more time to get the timestamp
+		os.Exit(0)
+	}()
 
 	// Run the function in the background
 	go func() {
 		for {
-			// Call your function here
-			ps.Processes()
+			// Call your first function here
+			ps.Processes(false)
 			f.Printf("Current time: %v\n", bt.ElapsedTime())
 			bt.Reset()
 
 			// Sleep for 10 seconds
-			t.Sleep(processInterval * t.Second)
+			t.Sleep(processInterval * t.Millisecond)
 		}
 	}()
 
-	// Keep the main goroutine alive
-	// This is necessary to prevent the program from exiting immediately
-	// since the other goroutine is running in the background.
+	// Keep the main function running indefinitely
 	select {}
-
 }

@@ -1,6 +1,6 @@
 # BigBro
 
-- [ ] Application Usage: Track which applications are being used and for how long. This could include both built-in Windows applications and third-party software.
+- [x] Application Usage: Track which applications are being used and for how long. This could include both built-in Windows applications and third-party software.
 
 - [ ] Website Visits: Monitor web browsing activity, including URLs visited and time spent on each site.
 

@@ -80,7 +80,7 @@ func RemoveFile(path string) error {
 	return os.Remove(path)
 }
 
-func MakeNessesaryFiles() {
+func MakeNecessaryFiles() {
 	// Create a new directory
 	if !IfDirExists(Folder) {
 		err := MakeDir(Folder)

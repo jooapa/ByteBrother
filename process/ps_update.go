@@ -1,78 +1,133 @@
 package process
 
 import (
+	"encoding/json"
+	"fmt"
+	"os"
+	"time"
+
 	bt "bigbro/bigtime"
 	fl "bigbro/filer"
-	f "fmt"
-	"strings"
-	t "time"
 )
 
-func Processes() {
-	processes := GetProcesses()
-	var newContent string
-	var oldContent string
+// ProcessEntry represents a single entry in the process log.
+type ProcessEntry struct {
+	Name             string   `json:"name"`
+	TotalTime        string   `json:"total_time"`
+	CurrentlyRunning bool     `json:"currently_opened"`
+	Opened           []string `json:"opened"`
+	Closed           []string `json:"closed"`
+}
 
-	// read the file to get the old content
-	if fl.IfFileExists(fl.Folder + "/" + fl.ExeLog) {
-		oldContent2, err := fl.ReadFilePath(fl.Folder + "/" + fl.ExeLog)
-		if err != nil {
-			f.Printf("Failed to read file: %v\n", err)
-		}
-		oldContent = string(oldContent2) // Convert []byte to string
-	} else {
-		f.Printf("File doesn't exist\n")
+// Processes updates the process log.
+func Processes(forceNotRunning bool) {
+	currentProcesses := GetProcesses()
+	logEntries := readLogFile()
+
+	// Create a map for quick lookup of current processes
+	currentProcessesMap := make(map[string]bool)
+	for _, process := range currentProcesses {
+		currentProcessesMap[process] = true
 	}
 
-	oldContentSlice := strings.Split(string(oldContent), "\n")
-
-	// if process is already in the file, update the time, else add the process and related time
-	updatedProcesses := make([]string, 0, len(oldContentSlice))
-
-	for i := 0; i < len(processes); i++ {
+	// Update or add new process entries
+	for _, process := range currentProcesses {
 		found := false
-		for j := 0; j < len(oldContentSlice); j++ {
-			// if the process is already in the file add the elapsed time to the time
-			if strings.Contains(oldContentSlice[j], processes[i]) {
-				newTime := getTimeFromProcess(oldContentSlice[j])
-				newTimeDuration, err := t.ParseDuration(newTime)
-				if err != nil {
-					f.Printf("Failed to parse duration: %v\n", err)
+		for i, entry := range logEntries {
+			if entry.Name == process {
+				newTime := getTimeDuration(entry.TotalTime)
+				newTime = bt.AddTimeTogether(newTime, bt.ElapsedTime())
+				logEntries[i].TotalTime = newTime.String()
+				logEntries[i].CurrentlyRunning = true
+				if !entry.CurrentlyRunning {
+					// If the process was not running before, add a timestamp to the Opened array
+					logEntries[i].Opened = append(logEntries[i].Opened, time.Now().Format(time.RFC3339))
 				}
-				newTimeDuration = bt.AddTimeTogether(newTimeDuration, bt.ElapsedTime())
-				updatedProcesses = append(updatedProcesses, processes[i]+"|"+newTimeDuration.String())
-				oldContentSlice[j] = "" // clear the old process so it won't be added back later
 				found = true
 				break
 			}
 		}
-		// if the process is not in the file, add the process and the time
 		if !found {
-			updatedProcesses = append(updatedProcesses, processes[i]+"|"+bt.ElapsedTime().String())
+			logEntries = append(logEntries, ProcessEntry{
+				Name:             process,
+				TotalTime:        bt.ElapsedTime().String(),
+				CurrentlyRunning: true,
+				Opened:           []string{time.Now().Format(time.RFC3339)}, // Add a timestamp to the Opened array
+			})
 		}
 	}
 
-	// Append any old processes that were not updated
-	for _, oldProcess := range oldContentSlice {
-		if oldProcess != "" {
-			updatedProcesses = append(updatedProcesses, oldProcess)
+	// Check for processes that have stopped running
+	for i, entry := range logEntries {
+		if _, exists := currentProcessesMap[entry.Name]; !exists || forceNotRunning {
+			logEntries[i].CurrentlyRunning = false // Set the CurrentlyRunning field to false
+			// If the process was running before, add a timestamp to the Closed array
+			if entry.CurrentlyRunning || forceNotRunning && entry.CurrentlyRunning {
+				logEntries[i].Closed = append(logEntries[i].Closed, time.Now().Format(time.RFC3339))
+			}
 		}
 	}
 
-	newContent = strings.Join(updatedProcesses, "\n")
-
-	// write the new content to the file
-	err := fl.WriteFilePath(fl.Folder+"/"+fl.ExeLog, newContent)
-	if err != nil {
-		f.Printf("Failed to write to file: %v\n", err)
+	// Write the new log entries to the file
+	if makeLogEntries(logEntries) {
+		return
 	}
-
 }
 
-func getTimeFromProcess(process string) string {
-	split := strings.Split(process, "|")
-	if len(split) > 1 {
-		return split[1]
+func readLogFile() []ProcessEntry {
+	var logEntries []ProcessEntry
+	if fl.IfFileExists(fl.Folder + "/" + fl.ExeLog) {
+		oldContent, err := fl.ReadFilePath(fl.Folder + "/" + fl.ExeLog)
+		if err != nil {
+			fmt.Printf("Failed to read file: %v\n", err)
+		} else {
+
+			err := json.Unmarshal(oldContent, &logEntries)
+			if err != nil {
+				fmt.Printf("Failed to unmarshal existing log: %v\n", err)
+			}
+		}
+	} else {
+		fmt.Println("File doesn't exist")
 	}
-	return t.Now().String()
+	return logEntries
+}
+
+func makeLogEntries(logEntries []ProcessEntry) bool {
+	newContent, err := json.MarshalIndent(logEntries, "", "    ")
+	if err != nil {
+		fmt.Printf("Failed to marshal log entries: %v\n", err)
+		return true
+	}
+
+	err = os.WriteFile(fl.Folder+"/"+fl.ExeLog, newContent, 0644)
+	if err != nil {
+		fmt.Printf("Failed to write to file: %v\n", err)
+	}
+	return false
+}
+
+// getTimeDuration converts a duration string to a time.Duration object.
+func getTimeDuration(durationStr string) time.Duration {
+	duration, err := time.ParseDuration(durationStr)
+	if err != nil {
+		fmt.Printf("Failed to parse duration: %v\n", err)
+		return 0
+	}
+	return duration
+}
+
+func ResetCurrentlyOpened() {
+	// Read the existing log file
+	logEntries := readLogFile()
+
+	// Set all currently_opened fields to false
+	for i := range logEntries {
+		logEntries[i].CurrentlyRunning = false
+	}
+
+	// Write the updated log entries back to the file
+	if makeLogEntries(logEntries) {
+		return
+	}
 }
