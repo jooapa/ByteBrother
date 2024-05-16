@@ -6,7 +6,7 @@
 
 - [x] Logs every connection made in the open network. (http, microsoft connections, etc.)
 
-- [ ] Keystrokes: Capture keystrokes to understand what users are typing
+- [x] Keystrokes: Capture keystrokes to understand what users are typing
 
 - [ ] Screen Activity: Record screenshots periodically to visualize what's happening on the screen.
 
