@@ -1,4 +1,4 @@
-# ByteBrother
+![banner](.github/banner.png)
 
 - [x] Application Usage: Track which applications are being used and for how long.
 

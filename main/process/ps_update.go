@@ -73,10 +73,12 @@ func Processes(forceNotRunning bool) {
 		}
 	}
 
+	// if forceNotRunning {
 	// Write the new log entries to the file
 	if makeLogEntries(logEntries) {
 		return
 	}
+	// }
 }
 
 func readLogFile() []ProcessEntry {

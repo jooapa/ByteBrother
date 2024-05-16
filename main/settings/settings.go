@@ -12,7 +12,7 @@ import (
 type Settings struct {
 	ProcessInterval       int `json:"process_interval_milliseconds"`
 	NetworkIndexToMonitor int `json:"network_index_to_monitor"`
-	NumRowsInArchive      int `json:"num_rows_in_archive"`
+	NumRowsInArchive      int `json:"num_rows_in_file_until_archive"`
 }
 
 // LoadSettings loads the settings from the settings file.
