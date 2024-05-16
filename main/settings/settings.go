@@ -48,6 +48,7 @@ func LoadSettings() Settings {
 		SaveSettings(settings)
 	}
 
+	SaveSettings(settings)
 	return settings
 }
 
