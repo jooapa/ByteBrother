@@ -55,9 +55,10 @@ func Start() {
 			settings := st.LoadSettings()
 
 			st.SaveSettings(st.Settings{
-				ProcessInterval:       settings.ProcessInterval,
-				NetworkIndexToMonitor: ChosenIndex,
-				NumRowsInArchive:      settings.NumRowsInArchive,
+				ProcessInterval:              settings.ProcessInterval,
+				NetworkIndexToMonitor:        ChosenIndex,
+				NumRowsInArchive:             settings.NumRowsInArchive,
+				SaveProcessInformationInFile: settings.SaveProcessInformationInFile,
 			})
 
 			if ChosenIndex == -1 {
@@ -100,7 +101,7 @@ func Start() {
 			// Find URLs in the payload
 			urls := urlRegex.FindAll(payload, -1)
 			for _, url := range urls {
-				fmt.Printf("URL found: %s\n", url)
+				// fmt.Printf("URL found: %s\n", url)
 
 				// Write the URL to a file
 				fl.AppendToFile(fl.LogFolder+fl.NetworkLogs, string(url)+"\n")

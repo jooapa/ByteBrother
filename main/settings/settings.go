@@ -10,17 +10,19 @@ import (
 
 // Settings represents the settings of the application.
 type Settings struct {
-	ProcessInterval       int `json:"process_interval_milliseconds"`
-	NetworkIndexToMonitor int `json:"network_index_to_monitor"`
-	NumRowsInArchive      int `json:"num_rows_in_file_until_archive"`
+	ProcessInterval              int `json:"process_interval_milliseconds"`
+	SaveProcessInformationInFile int `json:"save_process_information_in_file_milliseconds"`
+	NetworkIndexToMonitor        int `json:"network_index_to_monitor"`
+	NumRowsInArchive             int `json:"num_rows_in_file_until_archive"`
 }
 
 // LoadSettings loads the settings from the settings file.
 func LoadSettings() Settings {
 	settings := Settings{
-		ProcessInterval:       1000,
-		NetworkIndexToMonitor: 69420,
-		NumRowsInArchive:      5000,
+		ProcessInterval:              1000,
+		SaveProcessInformationInFile: 5000,
+		NetworkIndexToMonitor:        69420,
+		NumRowsInArchive:             5000,
 	}
 
 	if fl.IfFileExists(fl.Folder + fl.SettingsFile) {

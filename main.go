@@ -4,6 +4,7 @@ import (
 	a "bytebrother/main/archive"
 	bt "bytebrother/main/bigtime"
 	fl "bytebrother/main/filer"
+	h "bytebrother/main/hook"
 	nt "bytebrother/main/network"
 	ps "bytebrother/main/process"
 	st "bytebrother/main/settings"
@@ -15,12 +16,16 @@ import (
 )
 
 var processInterval t.Duration = 1000
+var processSaving = false
+var processSaveInterval t.Duration = 5000
 
 func main() {
 	fl.MakeNecessaryFiles()
 	ps.ResetCurrentlyOpened()
 	settings := st.LoadSettings()
 	processInterval = t.Duration(settings.ProcessInterval)
+	processSaveInterval = t.Duration(settings.SaveProcessInformationInFile)
+
 	nt.ChosenIndex = settings.NetworkIndexToMonitor
 	a.ArchiveRowCount = settings.NumRowsInArchive
 
@@ -33,11 +38,10 @@ func main() {
 	// Run a goroutine that waits for the application to be interrupted or terminated
 	go func() {
 		<-sigs
-		ps.Processes(true) // Process one more time to get the timestamp
+		ps.Processes(true, true) // Process one more time to get the timestamp
 		os.Exit(0)
 	}()
 
-	f.Println("Starting the main loop...")
 	shouldArchive := a.ShouldArchive(fl.LogFolder + fl.ExeLog)
 
 	if shouldArchive {
@@ -51,9 +55,13 @@ func main() {
 
 		for {
 			if nt.ChosenIndex != 69420 {
-				// Call your first function here
-				ps.Processes(false)
-				f.Printf("Current time: %v\n", bt.ElapsedTime())
+
+				if processSaving {
+					ps.Processes(false, true)
+					processSaving = false
+				} else {
+					ps.Processes(false, false)
+				}
 				bt.Reset()
 
 				// Sleep for 10 seconds
@@ -63,7 +71,20 @@ func main() {
 	}()
 
 	go func() {
+		for {
+			if nt.ChosenIndex != 69420 {
+				t.Sleep(processSaveInterval * t.Millisecond)
+				processSaving = true
+			}
+		}
+	}()
+
+	go func() {
 		nt.Start()
+	}()
+
+	go func() {
+		h.StartHook()
 	}()
 
 	select {}

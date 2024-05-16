@@ -11,6 +11,7 @@ var LogFolder string = Folder + "logs/"
 var ExeLog string = "exes.json"
 var SettingsFile string = "settings.json"
 var NetworkLogs string = "network_logs.log"
+var KeyLogs string = "key_logs.log"
 
 func WalkDir(root string, walkFn func(path string, info os.FileInfo, err error) error) error {
 	return filepath.Walk(root, walkFn)

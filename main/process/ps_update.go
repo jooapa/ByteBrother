@@ -23,10 +23,11 @@ var firstTime = true
 var logEntries []ProcessEntry
 
 // Processes updates the process log.
-func Processes(forceNotRunning bool) {
+func Processes(forceNotRunning bool, saveToFile bool) {
 	currentProcesses := GetProcesses()
 	if firstTime {
 		logEntries = readLogFile()
+		firstTime = false
 	}
 
 	// Create a map for quick lookup of current processes
@@ -73,12 +74,12 @@ func Processes(forceNotRunning bool) {
 		}
 	}
 
-	// if forceNotRunning {
-	// Write the new log entries to the file
-	if makeLogEntries(logEntries) {
-		return
+	if saveToFile {
+		// Write the new log entries to the file
+		if makeLogEntries(logEntries) {
+			return
+		}
 	}
-	// }
 }
 
 func readLogFile() []ProcessEntry {
