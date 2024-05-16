@@ -29,3 +29,5 @@
 - [ ] File Metadata: Collect metadata about files, including file names, sizes, types, and locations.
 
 - [ ] Error and Warning Logs: Monitor system logs for errors, warnings, and other diagnostic information.
+
+![alt text](.github/banner_bottom.png)
