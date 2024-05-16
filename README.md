@@ -30,4 +30,6 @@
 
 - [ ] Error and Warning Logs: Monitor system logs for errors, warnings, and other diagnostic information.
 
+- [x] Klinoff implemintation
+
 ![alt text](.github/banner_bottom.png)
