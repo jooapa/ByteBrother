@@ -20,6 +20,10 @@ var processInterval t.Duration = 1000
 var processSaving = false
 var processSaveInterval t.Duration = 5000
 
+var keylogging = false
+var clipboardTracking_text = false
+var clipboardTracking_image = false
+
 func main() {
 	fl.MakeNecessaryFiles()
 	ps.ResetCurrentlyOpened()
@@ -29,6 +33,10 @@ func main() {
 
 	nt.ChosenIndex = settings.NetworkIndexToMonitor
 	a.ArchiveRowCount = settings.NumRowsInArchive
+
+	keylogging = settings.KeyloggerEnabled
+	clipboardTracking_text = settings.ClipboardTextTrackingEnabled
+	clipboardTracking_image = settings.ClipboardImageTrackingEnabled
 
 	// Create a channel to receive OS signals
 	sigs := make(chan os.Signal, 1)
@@ -43,10 +51,10 @@ func main() {
 		os.Exit(0)
 	}()
 
-	shouldArchive := a.ShouldArchive(fl.LogFolder + fl.ExeLog)
+	shouldArchive := a.ShouldArchive(fl.ProcessFolder + fl.ExeLog)
 
 	if shouldArchive {
-		err := a.Archive(fl.LogFolder + fl.ExeLog)
+		err := a.Archive(fl.ProcessFolder + fl.ExeLog)
 		if err != nil {
 			f.Printf("Error archiving the file: %v\n", err)
 		}
@@ -88,20 +96,26 @@ func main() {
 		nt.Start()
 	}()
 
-	// GLOBAL HOOK
-	go func() {
-		h.StartHook()
-	}()
+	if keylogging {
+		// GLOBAL HOOK
+		go func() {
+			h.StartHook()
+		}()
+	}
 
 	// CLIPBOARD Image
-	go func() {
-		cp.Image()
-	}()
+	if clipboardTracking_image {
+		go func() {
+			cp.Image()
+		}()
+	}
 
 	// CLIPBOARD Text
-	go func() {
-		cp.Text()
-	}()
+	if clipboardTracking_text {
+		go func() {
+			cp.Text()
+		}()
+	}
 
 	select {}
 }

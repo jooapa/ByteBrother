@@ -54,12 +54,8 @@ func Start() {
 
 			settings := st.LoadSettings()
 
-			st.SaveSettings(st.Settings{
-				ProcessInterval:              settings.ProcessInterval,
-				NetworkIndexToMonitor:        ChosenIndex,
-				NumRowsInArchive:             settings.NumRowsInArchive,
-				SaveProcessInformationInFile: settings.SaveProcessInformationInFile,
-			})
+			settings.NetworkIndexToMonitor = ChosenIndex
+			st.SaveSettings(settings)
 
 			if ChosenIndex == -1 {
 				fmt.Println("Unsafe network logging is disabled.")

