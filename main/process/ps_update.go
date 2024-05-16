@@ -19,10 +19,15 @@ type ProcessEntry struct {
 	Closed           []string `json:"closed"`
 }
 
+var firstTime = true
+var logEntries []ProcessEntry
+
 // Processes updates the process log.
 func Processes(forceNotRunning bool) {
 	currentProcesses := GetProcesses()
-	logEntries := readLogFile()
+	if firstTime {
+		logEntries = readLogFile()
+	}
 
 	// Create a map for quick lookup of current processes
 	currentProcessesMap := make(map[string]bool)

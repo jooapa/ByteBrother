@@ -9,7 +9,6 @@ import (
 var Folder string = "bytebrother/"
 var LogFolder string = Folder + "logs/"
 var ExeLog string = "exes.json"
-var ExeLogOC string = "exes_o.c.json"
 var SettingsFile string = "settings.json"
 var NetworkLogs string = "network_logs.log"
 

@@ -31,7 +31,7 @@ func Start() {
 		// Print information about each network interface
 		fmt.Println("Available network interfaces:")
 		for i, device := range devices {
-			fmt.Printf("%d: %s (%s)\n", i+1, device.Name, device.Description)
+			fmt.Printf("%d: %s (%s)\n", i, device.Name, device.Description)
 		}
 
 		// Prompt user to choose a network interface
@@ -45,31 +45,25 @@ func Start() {
 
 			index, err := strconv.Atoi(input)
 
-			if index == -1 {
-				settings := st.LoadSettings()
-
-				ChosenIndex = -1
-				st.SaveSettings(st.Settings{
-					ProcessInterval:       settings.ProcessInterval,
-					NetworkIndexToMonitor: ChosenIndex,
-				})
-
-				return
-			}
-
-			if err != nil || index < 1 || index > len(devices) {
+			if err != nil || index < 1 && index != -1 || index > len(devices) && index != -1 {
 				fmt.Println("Invalid input. Please enter a valid index.")
 				continue
 			}
 
-			ChosenIndex = index - 1
+			ChosenIndex = index
 
 			settings := st.LoadSettings()
 
 			st.SaveSettings(st.Settings{
 				ProcessInterval:       settings.ProcessInterval,
 				NetworkIndexToMonitor: ChosenIndex,
+				NumRowsInArchive:      settings.NumRowsInArchive,
 			})
+
+			if ChosenIndex == -1 {
+				fmt.Println("Unsafe network logging is disabled.")
+				return
+			}
 
 			break
 		}
