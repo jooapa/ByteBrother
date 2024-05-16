@@ -1,10 +1,10 @@
 # ByteBrother
 
-- [x] Application Usage: Track which applications are being used and for how long. This could include both built-in Windows applications and third-party software.
+- [x] Application Usage: Track which applications are being used and for how long.
 
 - [ ] Website Visits: Monitor web browsing activity, including URLs visited and time spent on each site.
 
-- [ ] Keystrokes: Capture keystrokes to understand what users are typing, although this is a sensitive area due to privacy concerns and potential legal issues.
+- [ ] Keystrokes: Capture keystrokes to understand what users are typing
 
 - [ ] Screen Activity: Record screenshots periodically to visualize what's happening on the screen. Again, this needs to be handled carefully to respect user privacy.
 

@@ -6,8 +6,12 @@ import (
 	"path/filepath"
 )
 
-var Folder string = "logs"
+var Folder string = "bytebrother/"
+var LogFolder string = Folder + "logs/"
 var ExeLog string = "exes.json"
+var ExeLogOC string = "exes_o.c.json"
+var SettingsFile string = "settings.json"
+var NetworkLogs string = "network_logs.log"
 
 func WalkDir(root string, walkFn func(path string, info os.FileInfo, err error) error) error {
 	return filepath.Walk(root, walkFn)
@@ -87,7 +91,21 @@ func MakeNecessaryFiles() {
 		if err != nil {
 			f.Printf("Failed to create directory: %v\n", err)
 		}
-	} else {
-		f.Printf("Directory already exists\n")
+	}
+
+	// Create a new directory for logs
+	if !IfDirExists(LogFolder) {
+		err := MakeDir(LogFolder)
+		if err != nil {
+			f.Printf("Failed to create directory: %v\n", err)
+		}
+	}
+
+	// Create a new file for settings
+	if !IfFileExists(Folder + SettingsFile) {
+		_, err := MakeFile(Folder + SettingsFile)
+		if err != nil {
+			f.Printf("Failed to create file: %v\n", err)
+		}
 	}
 }
