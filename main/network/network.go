@@ -102,9 +102,7 @@ func Start() {
 			urls := urlRegex.FindAll(payload, -1)
 			for _, url := range urls {
 				// fmt.Printf("URL found: %s\n", url)
-
-				// Write the URL to a file
-				fl.AppendToFile(fl.LogFolder+fl.NetworkLogs, string(url)+"\n")
+				fl.AppendToFile(fl.LogFolder+fl.NetworkLogs, "["+fl.CurrentTime()+"] "+string(url)+"\n")
 			}
 		}
 	}

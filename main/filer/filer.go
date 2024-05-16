@@ -136,9 +136,9 @@ func TodaysClipboardFolder() string {
 }
 
 func Today() string {
-	return time.Now().Format("2006-01-02")
+	return time.Now().Format("2006.01.02")
 }
 
 func CurrentTime() string {
-	return time.Now().Format("15-04-05")
+	return time.Now().Format("15.04.05")
 }
