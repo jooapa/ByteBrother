@@ -2,15 +2,15 @@
 
 <img align="left" style="width:260px" src=".github/camera_right.png">
 
-- [x] Application Usage: Track which applications are being used and for how long.
+- [x] Track which applications are being used and for how long and how often.
 
 - [x] Logs every connection made in the open network. (http, microsoft connections, etc.)
 
-- [x] Keystrokes: Capture keystrokes to understand what users are typing
+- [x] Global keylogger
+
+- [x] Clipboard: Save clipboard content, text and images
 
 - [ ] Screen Activity: Record screenshots periodically to visualize what's happening on the screen.
-
-- [ ] System Events: Monitor system events such as logins, logouts, shutdowns, and application launches.
 
 <img align="right" style="width:260px" src=".github/camera_left.png">
 
@@ -22,7 +22,7 @@
 
 - [ ] System Settings Changes: Monitor changes to system settings, preferences, and configurations.
 
-- [ ] Clipboard Activity: Track items copied to the clipboard, including text, images, or files.
+- [ ] System Events: Monitor system events such as logins, logouts, shutdowns, and application launches.
 
 - [ ] Software Installations/Uninstallations: Record when new software is installed or existing software is removed from the system.
 

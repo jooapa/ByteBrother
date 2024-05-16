@@ -4,6 +4,7 @@ import (
 	f "fmt"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 var Folder string = "bytebrother/"
@@ -12,6 +13,8 @@ var ExeLog string = "exes.json"
 var SettingsFile string = "settings.json"
 var NetworkLogs string = "network_logs.log"
 var KeyLogs string = "key_logs.log"
+var ClipboardFolder string = Folder + "clipboard/"
+var ClipboardFile string = "clipboard.json"
 
 func WalkDir(root string, walkFn func(path string, info os.FileInfo, err error) error) error {
 	return filepath.Walk(root, walkFn)
@@ -108,4 +111,34 @@ func MakeNecessaryFiles() {
 			f.Printf("Failed to create file: %v\n", err)
 		}
 	}
+
+	if !IfDirExists(ClipboardFolder) {
+		err := MakeDir(ClipboardFolder)
+		if err != nil {
+			f.Printf("Failed to create directory: %v\n", err)
+		}
+	}
+
+	MakeTodayClipboardFolder()
+}
+
+func MakeTodayClipboardFolder() {
+	if !IfDirExists(TodaysClipboardFolder()) {
+		err := MakeDir(TodaysClipboardFolder())
+		if err != nil {
+			f.Printf("Failed to create directory: %v\n", err)
+		}
+	}
+}
+
+func TodaysClipboardFolder() string {
+	return ClipboardFolder + Today() + "/"
+}
+
+func Today() string {
+	return time.Now().Format("2006-01-02")
+}
+
+func CurrentTime() string {
+	return time.Now().Format("15-04-05")
 }

