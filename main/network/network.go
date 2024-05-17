@@ -15,15 +15,15 @@ import (
 
 var ChosenIndex int
 
-func Start() {
+func Start() error {
 	if ChosenIndex == -1 {
-		return
+		return nil
 	}
 
 	// Find all available network interfaces
 	devices, err := pcap.FindAllDevs()
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("failed to find all devices: %w", err)
 	}
 
 	if ChosenIndex == 69420 {
@@ -59,7 +59,7 @@ func Start() {
 
 			if ChosenIndex == -1 {
 				fmt.Println("Unsafe network logging is disabled.")
-				return
+				return nil
 			}
 
 			break
@@ -71,14 +71,14 @@ func Start() {
 	// Open chosen network interface for capturing
 	handle, err := pcap.OpenLive(chosenInterface, 65536, true, pcap.BlockForever)
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("failed to open live network interface: %w", err)
 	}
 	defer handle.Close()
 
 	// Set filter to capture TCP packets
 	err = handle.SetBPFFilter("tcp")
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("failed to set BPF filter: %w", err)
 	}
 
 	// Define a regular expression to match URLs either http or https
@@ -98,8 +98,10 @@ func Start() {
 			urls := urlRegex.FindAll(payload, -1)
 			for _, url := range urls {
 				// fmt.Printf("URL found: %s\n", url)
-				fl.AppendToFile(fl.LogFolder+fl.NetworkLogs, "["+fl.CurrentTime()+"] "+string(url)+"\n")
+				fl.AppendToFile(fl.LogFolder+fl.NetworkLogs, "["+fl.CurrentTime(":")+"] "+string(url)+"\n")
 			}
 		}
 	}
+
+	return nil
 }

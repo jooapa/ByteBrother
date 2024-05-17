@@ -27,7 +27,7 @@ func Image() {
 			return
 		}
 
-		f, err := os.Create(fl.ClipboardFolder + fl.Today() + "/clipboard_" + fl.CurrentTime() + ".png")
+		f, err := os.Create(fl.ClipboardFolder + fl.Today() + "/clipboard_" + fl.CurrentTime("-") + ".png")
 
 		if err != nil {
 			fmt.Println(err)
@@ -64,7 +64,7 @@ func Text() {
 		// text to folder
 		clipboardData := readClipboard()
 		clipboardData = append(clipboardData, ClipboardData{
-			Time: fl.CurrentTime(),
+			Time: fl.CurrentTime(":"),
 			Text: string(data),
 		})
 

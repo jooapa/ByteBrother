@@ -10,6 +10,7 @@ import (
 	ps "bytebrother/main/process"
 	st "bytebrother/main/settings"
 	f "fmt"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -93,7 +94,11 @@ func main() {
 
 	// NETWORK
 	go func() {
-		nt.Start()
+		// if couldn't load wpcap.dll, dont start network
+		err := nt.Start()
+		if err != nil {
+			log.Fatalf("Failed to start network: %v", err)
+		}
 	}()
 
 	if keylogging {
