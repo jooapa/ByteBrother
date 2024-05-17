@@ -7,6 +7,8 @@ import (
 	"syscall"
 	t "time"
 
+	"github.com/gofrs/flock"
+
 	a "bytebrother/main/archive"
 	bt "bytebrother/main/bigtime"
 	cp "bytebrother/main/clipboard"
@@ -21,6 +23,18 @@ import (
 )
 
 func main() {
+	fl.MakeDir(fl.Folder)
+	// Create a lock file to prevent multiple instances of the application from running
+	// Create a new file lock
+	lock := flock.New(fl.Folder + fl.LockFile)
+	locked, err := lock.TryLock()
+	if err != nil {
+		log.Fatalf("Failed to lock: %v", err)
+	}
+	if !locked {
+		log.Fatalf("Another instance of the application is already running")
+	}
+
 	fl.MakeNecessaryFiles()
 	ps.ResetCurrentlyOpened()
 	settings := st.LoadSettings()
@@ -46,6 +60,8 @@ func main() {
 	// Run a goroutine that waits for the application to be interrupted or terminated
 	go func() {
 		<-sigs
+
+		lock.Unlock()
 		ps.Processes(true, true) // Process one more time to get the timestamp
 		os.Exit(0)
 	}()

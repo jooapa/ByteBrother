@@ -3,7 +3,9 @@ package screenshot
 import (
 	"fmt"
 	"image/png"
+	"log"
 	"os"
+
 	// "path/filepath"
 
 	fl "bytebrother/main/filer"
@@ -25,7 +27,13 @@ func TakeScreenshot() {
 		fileName := fmt.Sprintf(fl.ScreenshotFolder+fl.Today()+"/"+fl.CurrentTime("-")+"_%d.png", i)
 		file, _ := os.Create(fileName)
 		defer file.Close()
-		png.Encode(file, img)
+
+		// Use a lower compression level to reduce the file size
+		encoder := png.Encoder{CompressionLevel: png.BestCompression}
+
+		if err := encoder.Encode(file, img); err != nil {
+			log.Fatalf("Failed to encode image: %v", err)
+		}
 	}
 }
 

