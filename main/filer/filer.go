@@ -142,8 +142,8 @@ func MakeNecessaryFiles() {
 }
 
 func MakeTodayClipboardFolder() {
-	if !IfDirExists(TodaysFolder()) {
-		err := MakeDir(TodaysFolder())
+	if !IfDirExists(TodaysClipboardFolder()) {
+		err := MakeDir(TodaysClipboardFolder())
 		if err != nil {
 			f.Printf("Failed to create directory: %v\n", err)
 		}
@@ -151,19 +151,19 @@ func MakeTodayClipboardFolder() {
 }
 
 func MakeTodayScreenshotFolder() {
-	if !IfDirExists(TodayScreenshotFolder()) {
-		err := MakeDir(TodayScreenshotFolder())
+	if !IfDirExists(TodaysScreenshotFolder()) {
+		err := MakeDir(TodaysScreenshotFolder())
 		if err != nil {
 			f.Printf("Failed to create directory: %v\n", err)
 		}
 	}
 }
 
-func TodayScreenshotFolder() string {
+func TodaysScreenshotFolder() string {
 	return ScreenshotFolder + Today() + "/"
 }
 
-func TodaysFolder() string {
+func TodaysClipboardFolder() string {
 	return ClipboardFolder + Today() + "/"
 }
 

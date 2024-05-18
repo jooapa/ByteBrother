@@ -90,7 +90,7 @@ func main() {
 		// if couldn't load wpcap.dll, dont start network
 		err := nt.Start()
 		if err != nil {
-			log.Fatalf("Failed to start network: %v", err)
+			log.Fatalf("Failed to start network: %v\nDownload WinPcap from https://www.winpcap.org/install/default.htm", err)
 		}
 	}()
 
