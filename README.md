@@ -10,11 +10,9 @@
 
 - [x] Clipboard: Save clipboard content, text and images
 
-- [ ] Screen Activity: Record screenshots periodically to visualize what's happening on the screen.
+- [x] Screen Activity: Record screenshots periodically to visualize what's happening on the screen.
 
 <img align="right" style="width:260px" src=".github/camera_left.png">
-
-- [ ] Website Visits: Monitor web browsing activity, including URLs visited and time spent on each site.
 
 - [ ] Hardware Usage: Monitor hardware usage such as CPU, memory, and disk usage to understand system performance and resource utilization.
 
@@ -45,7 +43,7 @@ go get golang.org/x/sys
 
 for network sniffing you need to install winpcap
 
-```bash
+```ps1
 Start-Process "https://www.winpcap.org/install/default.htm"
 ```
 

@@ -94,7 +94,7 @@ func readClipboard() []ClipboardData {
 			}
 		}
 	} else {
-		fmt.Println("File doesn't exist")
+		fmt.Println(fl.ClipboardFolder + fl.Today() + "/clipboard.json doesn't exist")
 	}
 	return clipboardData
 }

@@ -10,13 +10,12 @@ import (
 	"github.com/google/gopacket/pcap"
 
 	fl "bytebrother/main/filer"
+	g "bytebrother/main/global"
 	st "bytebrother/main/settings"
 )
 
-var ChosenIndex int
-
 func Start() error {
-	if ChosenIndex == -1 {
+	if g.ChosenIndex == -1 {
 		return nil
 	}
 
@@ -26,7 +25,7 @@ func Start() error {
 		return fmt.Errorf("failed to find all devices: %w", err)
 	}
 
-	if ChosenIndex == 69420 {
+	if g.ChosenIndex == 69420 {
 
 		// Print information about each network interface
 		fmt.Println("Available network interfaces:")
@@ -50,14 +49,14 @@ func Start() error {
 				continue
 			}
 
-			ChosenIndex = index
+			g.ChosenIndex = index
 
 			settings := st.LoadSettings()
 
-			settings.NetworkIndexToMonitor = ChosenIndex
+			settings.NetworkIndexToMonitor = g.ChosenIndex
 			st.SaveSettings(settings)
 
-			if ChosenIndex == -1 {
+			if g.ChosenIndex == -1 {
 				fmt.Println("Unsafe network logging is disabled.")
 				return nil
 			}
@@ -66,7 +65,7 @@ func Start() error {
 		}
 	}
 
-	chosenInterface := devices[ChosenIndex].Name
+	chosenInterface := devices[g.ChosenIndex].Name
 
 	// Open chosen network interface for capturing
 	handle, err := pcap.OpenLive(chosenInterface, 65536, true, pcap.BlockForever)

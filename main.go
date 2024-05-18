@@ -1,43 +1,41 @@
 package main
 
 import (
-	a "bytebrother/main/archive"
-	bt "bytebrother/main/bigtime"
-	cp "bytebrother/main/clipboard"
-	fl "bytebrother/main/filer"
-	h "bytebrother/main/hook"
-	nt "bytebrother/main/network"
-	ps "bytebrother/main/process"
-	st "bytebrother/main/settings"
-	f "fmt"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
 	t "time"
+
+	a "bytebrother/main/archive"
+	bt "bytebrother/main/bigtime"
+	cp "bytebrother/main/clipboard"
+	fl "bytebrother/main/filer"
+	g "bytebrother/main/global"
+	h "bytebrother/main/hook"
+	nt "bytebrother/main/network"
+	ps "bytebrother/main/process"
+	ss "bytebrother/main/screenshot"
+	st "bytebrother/main/settings"
+	f "fmt"
 )
-
-var processInterval t.Duration = 1000
-var processSaving = false
-var processSaveInterval t.Duration = 5000
-
-var keylogging = false
-var clipboardTracking_text = false
-var clipboardTracking_image = false
 
 func main() {
 	fl.MakeNecessaryFiles()
 	ps.ResetCurrentlyOpened()
 	settings := st.LoadSettings()
-	processInterval = t.Duration(settings.ProcessInterval)
-	processSaveInterval = t.Duration(settings.SaveProcessInformationInFile)
 
-	nt.ChosenIndex = settings.NetworkIndexToMonitor
-	a.ArchiveRowCount = settings.NumRowsInArchive
+	g.ProcessInterval = t.Duration(settings.ProcessInterval)
+	g.SaveProcessInformationInFile = t.Duration(settings.SaveProcessInformationInFile)
+	g.ScreenshotInterval = t.Duration(settings.ScreenshotInterval)
 
-	keylogging = settings.KeyloggerEnabled
-	clipboardTracking_text = settings.ClipboardTextTrackingEnabled
-	clipboardTracking_image = settings.ClipboardImageTrackingEnabled
+	g.ChosenIndex = settings.NetworkIndexToMonitor
+	g.ArchiveRowCount = settings.NumRowsInArchive
+
+	g.Keylogging = settings.KeyloggerEnabled
+	g.ClipboardTracking_text = settings.ClipboardTextTrackingEnabled
+	g.ClipboardTracking_image = settings.ClipboardImageTrackingEnabled
+	g.CanTakeScreenshot = settings.CanTakeScreenshot
 
 	// Create a channel to receive OS signals
 	sigs := make(chan os.Signal, 1)
@@ -66,29 +64,24 @@ func main() {
 	// PROCESS
 	go func() {
 		for {
-			if nt.ChosenIndex != 69420 {
-
-				if processSaving {
-					ps.Processes(false, true)
-					processSaving = false
-				} else {
-					ps.Processes(false, false)
-				}
-				bt.Reset()
-
-				// Sleep for 10 seconds
-				t.Sleep(processInterval * t.Millisecond)
+			if g.ProcessSaving {
+				ps.Processes(false, true)
+				g.ProcessSaving = false
+			} else {
+				ps.Processes(false, false)
 			}
+			bt.Reset()
+
+			// Sleep for 10 seconds
+			t.Sleep(g.ProcessInterval * t.Millisecond)
 		}
 	}()
 
 	// PROCESS SAVING
 	go func() {
 		for {
-			if nt.ChosenIndex != 69420 {
-				t.Sleep(processSaveInterval * t.Millisecond)
-				processSaving = true
-			}
+			t.Sleep(g.ProcessSaveInterval * t.Millisecond)
+			g.ProcessSaving = true
 		}
 	}()
 
@@ -101,7 +94,7 @@ func main() {
 		}
 	}()
 
-	if keylogging {
+	if g.Keylogging {
 		// GLOBAL HOOK
 		go func() {
 			h.StartHook()
@@ -109,16 +102,40 @@ func main() {
 	}
 
 	// CLIPBOARD Image
-	if clipboardTracking_image {
+	if g.ClipboardTracking_image {
 		go func() {
 			cp.Image()
 		}()
 	}
 
 	// CLIPBOARD Text
-	if clipboardTracking_text {
+	if g.ClipboardTracking_text {
 		go func() {
 			cp.Text()
+		}()
+	}
+
+	// SCREENSHOT
+
+	// ARCHIVE SCREENSHOTS IF NEEDED
+	if g.ArchiveScreenshotsAfter {
+		can, folderName := ss.CanArchiveOlderFolder()
+		if can {
+			err := a.ArchiveFolder_sevenzip(fl.ScreenshotFolder + folderName)
+			if err != nil {
+				f.Printf("Error archiving the folder: %v\n", err)
+				os.Remove(fl.ScreenshotFolder + folderName + ".7z")
+				os.Rename(fl.ScreenshotFolder+folderName, fl.ScreenshotFolder+folderName+"_archived_failed")
+			}
+		}
+	}
+
+	if g.CanTakeScreenshot {
+		go func() {
+			for {
+				ss.TakeScreenshot()
+				t.Sleep(g.ScreenshotInterval_sec * t.Second)
+			}
 		}()
 	}
 

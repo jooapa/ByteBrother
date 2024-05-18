@@ -96,7 +96,7 @@ func readLogFile() []ProcessEntry {
 			}
 		}
 	} else {
-		fmt.Println("File doesn't exist")
+		fmt.Println(fl.ProcessFolder + fl.ExeLog + " doesn't exist")
 	}
 	return logEntries
 }

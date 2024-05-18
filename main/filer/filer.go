@@ -17,6 +17,7 @@ var NetworkLogs string = "network_logs.log"
 var KeyLogs string = "key_logs.log"
 var ClipboardFolder string = Folder + "clipboard/"
 var ClipboardFile string = "clipboard.json"
+var ScreenshotFolder string = Folder + "screenshots/"
 
 func WalkDir(root string, walkFn func(path string, info os.FileInfo, err error) error) error {
 	return filepath.Walk(root, walkFn)
@@ -129,19 +130,40 @@ func MakeNecessaryFiles() {
 		}
 	}
 
+	if !IfDirExists(ScreenshotFolder) {
+		err := MakeDir(ScreenshotFolder)
+		if err != nil {
+			f.Printf("Failed to create directory: %v\n", err)
+		}
+	}
+
 	MakeTodayClipboardFolder()
+	MakeTodayScreenshotFolder()
 }
 
 func MakeTodayClipboardFolder() {
-	if !IfDirExists(TodaysClipboardFolder()) {
-		err := MakeDir(TodaysClipboardFolder())
+	if !IfDirExists(TodaysFolder()) {
+		err := MakeDir(TodaysFolder())
 		if err != nil {
 			f.Printf("Failed to create directory: %v\n", err)
 		}
 	}
 }
 
-func TodaysClipboardFolder() string {
+func MakeTodayScreenshotFolder() {
+	if !IfDirExists(TodayScreenshotFolder()) {
+		err := MakeDir(TodayScreenshotFolder())
+		if err != nil {
+			f.Printf("Failed to create directory: %v\n", err)
+		}
+	}
+}
+
+func TodayScreenshotFolder() string {
+	return ScreenshotFolder + Today() + "/"
+}
+
+func TodaysFolder() string {
 	return ClipboardFolder + Today() + "/"
 }
 
@@ -151,4 +173,22 @@ func Today() string {
 
 func CurrentTime(op string) string {
 	return time.Now().Format("15" + op + "04" + op + "05")
+}
+
+func DirSize(path string) (int64, error) {
+	var size int64
+	err := filepath.Walk(path, func(_ string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() {
+			size += info.Size()
+		}
+		return err
+	})
+	return size, err
+}
+
+func GetFilesInDir(path string) ([]os.DirEntry, error) {
+	return os.ReadDir(path)
 }

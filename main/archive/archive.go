@@ -1,15 +1,16 @@
 package archive
 
 import (
-	fl "bytebrother/main/filer"
+	"archive/zip"
 	"bytes"
 	"fmt"
 	"io"
 	"os"
 	"strconv"
-)
 
-var ArchiveRowCount int = 1000
+	fl "bytebrother/main/filer"
+	g "bytebrother/main/global"
+)
 
 func LineCounter(r io.Reader) (int, error) {
 	buf := make([]byte, 32*1024)
@@ -47,7 +48,7 @@ func ShouldArchive(path string) bool {
 	}
 
 	// If the number of lines is greater than 100, return true
-	if count > ArchiveRowCount {
+	if count > g.ArchiveRowCount {
 		fmt.Printf("Should archive: %v\n", count)
 		return true
 	}
@@ -94,6 +95,66 @@ func Archive(path string) error {
 	}
 
 	err = os.Remove(path)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func ArchiveFolder_sevenzip(folderPath string) error {
+	// Walk through the folder and create a list of files
+	files, err := fl.GetFilesInDir(folderPath)
+	if err != nil {
+		return err
+	}
+
+	// Create a new archive file
+	archivePath := folderPath + ".7z"
+	archiveFile, err := os.Create(archivePath)
+	if err != nil {
+		return err
+	}
+	defer archiveFile.Close()
+
+	// Create a new zip writer
+	zipWriter := zip.NewWriter(archiveFile)
+	defer zipWriter.Close()
+
+	// Add files to the zip writer
+	for _, file := range files {
+		// Open the file
+		filePath := folderPath + "/" + file.Name()
+		fileToArchive, err := os.Open(filePath)
+		if err != nil {
+			return err
+		}
+		defer fileToArchive.Close()
+
+		// Create a new file in the zip writer
+		zipFile, err := zipWriter.Create(file.Name())
+		if err != nil {
+			return err
+		}
+
+		// Copy the contents of the file to the zip file
+		_, err = io.Copy(zipFile, fileToArchive)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Delete the original files
+	for _, file := range files {
+		filePath := folderPath + "/" + file.Name()
+		err = os.Remove(filePath)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Delete the original folder
+	err = os.Remove(folderPath)
 	if err != nil {
 		return err
 	}
