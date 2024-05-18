@@ -13,7 +13,7 @@ type Settings struct {
 	ProcessInterval               int  `json:"process_interval_milliseconds"`
 	SaveProcessInformationInFile  int  `json:"save_process_information_in_file_milliseconds"`
 	NetworkIndexToMonitor         int  `json:"network_index_to_monitor"`
-	NumRowsInArchive              int  `json:"num_rows_in_file_until_archive"`
+	NumRowsInArchive              int  `json:"num_rows_in_exes.json_file_until_archive"`
 	ScreenshotInterval            int  `json:"screenshot_interval_sec"`
 	KeyloggerEnabled              bool `json:"keylogger_enabled"`
 	ClipboardTextTrackingEnabled  bool `json:"clipboard_text_tracking_enabled"`
