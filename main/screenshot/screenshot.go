@@ -24,6 +24,10 @@ func TakeScreenshot() {
 			panic(err)
 		}
 
+		if os.IsNotExist(os.MkdirAll(fl.ScreenshotFolder+fl.Today(), 0755)) {
+			fl.MakeDir(fl.ScreenshotFolder + fl.Today())
+		}
+
 		fileName := fmt.Sprintf(fl.ScreenshotFolder+fl.Today()+"/"+fl.CurrentTime("-")+"_%d.png", i)
 		file, _ := os.Create(fileName)
 		defer file.Close()

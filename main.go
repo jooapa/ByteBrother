@@ -23,6 +23,12 @@ import (
 )
 
 func main() {
+	if len(os.Args) > 1 {
+		if os.Args[1] == "setup" {
+			g.IsSetup = true
+		}
+	}
+
 	fl.MakeDir(fl.Folder)
 	// Create a lock file to prevent multiple instances of the application from running
 	// Create a new file lock
@@ -133,22 +139,22 @@ func main() {
 
 	// SCREENSHOT
 
-	// ARCHIVE SCREENSHOTS IF NEEDED
-	if g.ArchiveScreenshotsAfter {
-		can, folderName := ss.CanArchiveOlderFolder()
-		if can {
-			err := a.ArchiveFolder_sevenzip(fl.ScreenshotFolder + folderName)
-			if err != nil {
-				f.Printf("Error archiving the folder: %v\n", err)
-				os.Remove(fl.ScreenshotFolder + folderName + ".7z")
-				os.Rename(fl.ScreenshotFolder+folderName, fl.ScreenshotFolder+folderName+"_archived_failed")
-			}
-		}
-	}
-
 	if g.CanTakeScreenshot {
 		go func() {
 			for {
+				// ARCHIVE SCREENSHOTS IF NEEDED
+				if g.ArchiveScreenshotsAfter {
+					can, folderName := ss.CanArchiveOlderFolder()
+					if can {
+						err := a.ArchiveFolder_sevenzip(fl.ScreenshotFolder + folderName)
+						if err != nil {
+							f.Printf("Error archiving the folder: %v\n", err)
+							os.Remove(fl.ScreenshotFolder + folderName + ".7z")
+							os.Rename(fl.ScreenshotFolder+folderName, fl.ScreenshotFolder+folderName+"_archived_failed")
+						}
+					}
+				}
+
 				ss.TakeScreenshot()
 				t.Sleep(g.ScreenshotInterval_sec * t.Second)
 			}

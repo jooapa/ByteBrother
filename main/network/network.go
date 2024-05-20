@@ -3,6 +3,7 @@ package network
 import (
 	"fmt"
 	"log"
+	"os"
 	"regexp"
 	"strconv"
 
@@ -63,6 +64,11 @@ func Start() error {
 
 			break
 		}
+	}
+
+	if g.IsSetup {
+		fmt.Println("Network logging is set up. You can later change the network interface to monitor in the bytebrother/settings.json file.\n if youre still unsure and want to try again, delete the entry 'network_index_to_monitor' in the settings.json file.")
+		os.Exit(0)
 	}
 
 	chosenInterface := devices[g.ChosenIndex].Name

@@ -21,4 +21,5 @@ var (
 	ClipboardTracking_image                 = false
 	Keylogging                              = false
 	ProcessSaving                           = false
+	IsSetup                                 = false
 )

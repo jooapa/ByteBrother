@@ -27,6 +27,10 @@ func Image() {
 			return
 		}
 
+		if os.IsNotExist(os.MkdirAll(fl.ClipboardFolder+fl.Today(), 0755)) {
+			fl.MakeDir(fl.ClipboardFolder + fl.Today())
+		}
+
 		f, err := os.Create(fl.ClipboardFolder + fl.Today() + "/clipboard_" + fl.CurrentTime("-") + ".png")
 
 		if err != nil {
@@ -71,6 +75,10 @@ func Text() {
 		newContent, err := json.MarshalIndent(clipboardData, "", "    ")
 		if err != nil || len(clipboardData) == 0 {
 			fmt.Printf("Failed to marshal log entries: %v\n", err)
+		}
+
+		if os.IsNotExist(os.MkdirAll(fl.ClipboardFolder+fl.Today(), 0755)) {
+			fl.MakeDir(fl.ClipboardFolder + fl.Today())
 		}
 
 		err = os.WriteFile(fl.ClipboardFolder+fl.Today()+"/"+fl.ClipboardFile, newContent, 0644)
