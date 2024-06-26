@@ -138,22 +138,21 @@ func main() {
 	}
 
 	// SCREENSHOT
-
 	if g.CanTakeScreenshot {
 		go func() {
 			for {
 				// ARCHIVE SCREENSHOTS IF NEEDED
-				if g.ArchiveScreenshotsAfter {
-					can, folderName := ss.CanArchiveOlderFolder()
-					if can {
-						err := a.ArchiveFolder_sevenzip(fl.ScreenshotFolder + folderName)
-						if err != nil {
-							f.Printf("Error archiving the folder: %v\n", err)
-							os.Remove(fl.ScreenshotFolder + folderName + ".7z")
-							os.Rename(fl.ScreenshotFolder+folderName, fl.ScreenshotFolder+folderName+"_archived_failed")
-						}
-					}
-				}
+				// if g.ArchiveScreenshotsAfter {
+				// can, folderName := ss.CanArchiveOlderFolder()
+				// if can {
+				// 	err := a.ArchiveFolder_sevenzip(fl.ScreenshotFolder + folderName)
+				// 	if err != nil {
+				// 		f.Printf("Error archiving the folder: %v\n", err)
+				// 		os.Remove(fl.ScreenshotFolder + folderName + ".7z")
+				// 		os.Rename(fl.ScreenshotFolder+folderName, fl.ScreenshotFolder+folderName+"_archived_failed")
+				// 	}
+				// }
+				// }
 
 				ss.TakeScreenshot()
 				t.Sleep(g.ScreenshotInterval_sec * t.Second)

@@ -19,7 +19,6 @@ type Settings struct {
 	ClipboardTextTrackingEnabled  bool `json:"clipboard_text_tracking_enabled"`
 	ClipboardImageTrackingEnabled bool `json:"clipboard_image_tracking_enabled"`
 	CanTakeScreenshot             bool `json:"can_take_screenshot"`
-	ArchiveScreenshotsAfter       bool `json:"archive_screenshots_after"`
 }
 
 // LoadSettings loads the settings from the settings file.
@@ -29,12 +28,11 @@ func LoadSettings() Settings {
 		SaveProcessInformationInFile:  5000,
 		NetworkIndexToMonitor:         69420,
 		NumRowsInArchive:              6000,
-		ScreenshotInterval:            60,
+		ScreenshotInterval:            300,
 		KeyloggerEnabled:              true,
 		ClipboardTextTrackingEnabled:  true,
 		ClipboardImageTrackingEnabled: true,
 		CanTakeScreenshot:             true,
-		ArchiveScreenshotsAfter:       true,
 	}
 
 	if fl.IfFileExists(fl.Folder + fl.SettingsFile) {
